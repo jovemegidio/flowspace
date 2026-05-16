@@ -1,0 +1,285 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Default theme tokens (dark) ─────────────────────────────── */
+:root {
+  --bg-base: #080810;
+  --bg-surface: #111111;
+  --bg-surface-1: #181818;
+  --bg-surface-2: #202020;
+  --bg-surface-3: #282828;
+  --border: #2a2a2a;
+  --border-subtle: #1f1f1f;
+  --text-primary: #efefef;
+  --text-secondary: #888888;
+  --text-muted: #4a4a4a;
+  --text-faint: #333333;
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-dim: rgba(99, 102, 241, 0.08);
+  --accent-rgb: 99, 102, 241;
+  --sidebar-bg: #0c0c0c;
+  --titlebar-bg: #0a0a0a;
+  --main-bg: #0d0d0d;
+  --card-bg: #141414;
+  --card-hover: #181818;
+  --scrollbar: #282828;
+  --input-bg: #141414;
+  --input-border: #222222;
+  --input-focus: rgba(99, 102, 241, 0.4);
+
+  --font-size-base: 15px;
+  --motion-duration: 200ms;
+  --motion-duration-slow: 500ms;
+}
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html, body, #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  body {
+    background: var(--bg-base);
+    color: var(--text-primary);
+    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: var(--font-size-base);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    user-select: none;
+    transition: background var(--motion-duration) ease, color var(--motion-duration) ease;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--bg-surface-3); }
+  ::-webkit-scrollbar-corner { background: transparent; }
+}
+
+/* ── Light theme overrides ───────────────────────────────────── */
+[data-theme="light"] body {
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
+[data-theme="light"] .ProseMirror {
+  color: #222222;
+}
+
+[data-theme="light"] .ProseMirror h1 { color: #111; }
+[data-theme="light"] .ProseMirror h2 { color: #222; }
+[data-theme="light"] .ProseMirror h3 { color: #333; }
+[data-theme="light"] .ProseMirror strong { color: #111; }
+[data-theme="light"] .ProseMirror code {
+  background: #f0f0f5;
+  border-color: #d8d8e0;
+  color: #4040cc;
+}
+[data-theme="light"] .ProseMirror pre {
+  background: #f8f8fb;
+  border-color: #e0e0ea;
+}
+[data-theme="light"] .ProseMirror blockquote {
+  color: #555;
+}
+
+/* ── High contrast ───────────────────────────────────────────── */
+[data-high-contrast] {
+  --border: #555555;
+  --border-subtle: #444444;
+  --text-secondary: #bbbbbb;
+  --text-muted: #888888;
+  --text-faint: #666666;
+}
+
+[data-high-contrast][data-theme="light"] {
+  --border: #888888;
+  --border-subtle: #aaaaaa;
+  --text-muted: #444444;
+  --text-faint: #666666;
+}
+
+/* ── Keyboard focus indicator ────────────────────────────────── */
+[data-keyboard-focus] *:focus-visible {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: 2px;
+}
+
+/* Without keyboard focus mode, hide the default outline */
+[data-keyboard-focus="false"] *:focus { outline: none; }
+
+/* ── Reduce motion ───────────────────────────────────────────── */
+[data-reduce-motion] *,
+[data-reduce-motion] *::before,
+[data-reduce-motion] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* Tauri window drag region */
+[data-tauri-drag-region] { -webkit-app-region: drag; }
+[data-tauri-drag-region] * { -webkit-app-region: no-drag; }
+[data-tauri-drag-region] button { -webkit-app-region: no-drag; }
+
+/* ── Tiptap prose editor ──────────────────────────────────────── */
+.ProseMirror {
+  outline: none;
+  min-height: 300px;
+  color: var(--text-secondary);
+  font-size: var(--font-size-base);
+  line-height: 1.85;
+  caret-color: var(--accent);
+  user-select: text;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: var(--text-faint);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.ProseMirror h1 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 1em 0 0.35em;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+.ProseMirror h2 {
+  font-size: 1.375rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0.9em 0 0.3em;
+  letter-spacing: -0.01em;
+}
+.ProseMirror h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0.75em 0 0.25em;
+}
+.ProseMirror p { margin: 0.3em 0; }
+
+.ProseMirror ul { list-style: disc; padding-left: 1.5em; margin: 0.5em 0; }
+.ProseMirror ol { list-style: decimal; padding-left: 1.5em; margin: 0.5em 0; }
+.ProseMirror li { margin: 0.2em 0; }
+
+.ProseMirror strong { font-weight: 600; color: var(--text-primary); }
+.ProseMirror em { font-style: italic; color: var(--text-muted); }
+
+.ProseMirror code {
+  background: var(--bg-surface-1);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+  font-size: 0.84em;
+  padding: 0.1em 0.45em;
+  color: #c8c8f0;
+}
+
+.ProseMirror pre {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.2em 1.4em;
+  margin: 1em 0;
+  overflow-x: auto;
+}
+.ProseMirror pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.875em;
+  color: #c8c8f0;
+}
+
+.ProseMirror blockquote {
+  border-left: 3px solid var(--accent);
+  padding-left: 1.1em;
+  color: var(--text-muted);
+  margin: 0.9em 0;
+  font-style: italic;
+}
+
+.ProseMirror hr {
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  margin: 1.75em 0;
+}
+
+/* Task list */
+.ProseMirror ul[data-type="taskList"] { list-style: none; padding: 0; }
+.ProseMirror ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65em;
+  margin: 0.35em 0;
+}
+.ProseMirror ul[data-type="taskList"] li label { margin-top: 0.2em; cursor: pointer; }
+.ProseMirror ul[data-type="taskList"] li input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* Links */
+.ProseMirror a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: opacity var(--motion-duration);
+}
+.ProseMirror a:hover { opacity: 0.8; }
+
+/* ── Skip to content link (accessibility) ────────────────────── */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  padding: 8px 16px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 10000;
+  border-radius: 0 0 8px 0;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+}
+
+/* ── Utility: hide scrollbar visually ───────────────────────── */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Smooth theme transition ─────────────────────────────────── */
+*, *::before, *::after {
+  transition:
+    background-color var(--motion-duration) ease,
+    border-color var(--motion-duration) ease,
+    color var(--motion-duration) ease;
+}
+
+/* Don't animate everything — just theme colors */
+button, a, input, textarea {
+  transition:
+    background-color var(--motion-duration) ease,
+    border-color var(--motion-duration) ease,
+    color var(--motion-duration) ease,
+    opacity var(--motion-duration) ease,
+    transform 100ms ease,
+    box-shadow var(--motion-duration) ease;
+}

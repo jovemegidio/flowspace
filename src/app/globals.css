@@ -1,0 +1,130 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: #6366f1;
+  --color-primary-hover: #4f46e5;
+  --color-sidebar: #0f0f0f;
+  --color-surface: #1a1a1a;
+  --color-surface-2: #242424;
+  --color-border: #2e2e2e;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+:root {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #3a3a3a;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Tiptap editor */
+.ProseMirror {
+  outline: none;
+  min-height: 200px;
+  color: #ededed;
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: #4b4b4b;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.ProseMirror h1 { font-size: 2em; font-weight: 700; margin: 0.5em 0; }
+.ProseMirror h2 { font-size: 1.5em; font-weight: 600; margin: 0.5em 0; }
+.ProseMirror h3 { font-size: 1.25em; font-weight: 600; margin: 0.4em 0; }
+
+.ProseMirror ul { list-style-type: disc; padding-left: 1.5em; }
+.ProseMirror ol { list-style-type: decimal; padding-left: 1.5em; }
+.ProseMirror li { margin: 0.25em 0; }
+
+.ProseMirror code {
+  background: #1e1e1e;
+  border-radius: 4px;
+  font-size: 0.875em;
+  padding: 0.1em 0.35em;
+  font-family: var(--font-mono), monospace;
+}
+
+.ProseMirror pre {
+  background: #1e1e1e;
+  border-radius: 8px;
+  padding: 1em;
+  margin: 1em 0;
+  overflow-x: auto;
+}
+
+.ProseMirror pre code {
+  background: none;
+  padding: 0;
+  font-size: 0.9em;
+}
+
+.ProseMirror blockquote {
+  border-left: 3px solid #6366f1;
+  padding-left: 1em;
+  color: #999;
+  margin: 1em 0;
+}
+
+.ProseMirror hr {
+  border: none;
+  border-top: 1px solid #2e2e2e;
+  margin: 1.5em 0;
+}
+
+.ProseMirror ul[data-type="taskList"] {
+  list-style: none;
+  padding: 0;
+}
+.ProseMirror ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5em;
+}
+.ProseMirror ul[data-type="taskList"] li > label {
+  margin-top: 0.2em;
+}
+
+.ProseMirror a {
+  color: #6366f1;
+  text-decoration: underline;
+  cursor: pointer;
+}
