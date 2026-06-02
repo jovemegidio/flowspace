@@ -3,7 +3,7 @@ import {
   BookOpen, Search, X, ExternalLink, Clock, Play, Pause,
   RotateCcw, ChevronRight, Globe, Calculator, FlaskConical,
   Code2, Languages, Music, Microscope, Atom, BookMarked,
-  ArrowLeft, Maximize2,
+  ArrowLeft, Maximize2, GraduationCap, MonitorPlay,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -372,10 +372,10 @@ export function LibraryPage() {
     import("@tauri-apps/plugin-shell").then((m) => m.open(url))
   }, [])
 
-  const typeIcon: Record<Resource["type"], string> = {
-    website: "🌐",
-    video: "▶️",
-    course: "🎓",
+  const TypeIcon: Record<Resource["type"], React.ComponentType<{ className?: string }>> = {
+    website: Globe,
+    video: MonitorPlay,
+    course: GraduationCap,
   }
 
   return (
@@ -480,7 +480,15 @@ export function LibraryPage() {
               aria-pressed={activeResource?.id === r.id}
             >
               <div className="flex items-start gap-3">
-                <span className="text-lg shrink-0 mt-0.5">{typeIcon[r.type]}</span>
+                <div
+                  className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
+                  style={{ background: "var(--accent-dim)", color: "var(--accent)" }}
+                >
+                  {(() => {
+                    const Icon = TypeIcon[r.type]
+                    return <Icon className="w-4 h-4" />
+                  })()}
+                </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     <p
