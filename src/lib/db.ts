@@ -1,10 +1,20 @@
 import Database from "@tauri-apps/plugin-sql"
+import { isTauri } from "./tauri"
+import { WebDatabase } from "./db.web"
 
-let db: Database | null = null
+// In Tauri we use the real SQLite plugin; in the browser preview we fall back
+// to a sql.js-backed database persisted in localStorage. Both expose the same
+// `execute` / `select` surface used throughout this module.
+interface DbLike {
+  execute(sql: string, params?: unknown[]): Promise<{ rowsAffected: number; lastInsertId?: number }>
+  select<T>(sql: string, params?: unknown[]): Promise<T>
+}
 
-export async function getDb(): Promise<Database> {
+let db: DbLike | null = null
+
+export async function getDb(): Promise<DbLike> {
   if (db) return db
-  db = await Database.load("sqlite:flowspace.db")
+  db = isTauri() ? await Database.load("sqlite:flowspace.db") : await WebDatabase.load()
   return db
 }
 

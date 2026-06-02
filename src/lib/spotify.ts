@@ -2,6 +2,7 @@ import { Store } from "@tauri-apps/plugin-store"
 import { open } from "@tauri-apps/plugin-shell"
 import { invoke } from "@tauri-apps/api/core"
 import { listen, type UnlistenFn } from "@tauri-apps/api/event"
+import { isTauri } from "./tauri"
 
 const SPOTIFY_BASE = "https://api.spotify.com/v1"
 const TOKEN_URL = "https://accounts.spotify.com/api/token"
@@ -37,9 +38,59 @@ async function generateChallenge(verifier: string): Promise<string> {
 
 // ─── Token Store ──────────────────────────────────────────────────────────────
 
-let _store: Store | null = null
-async function getStore() {
-  if (!_store) _store = await Store.load("flowspace-tokens.dat")
+// Minimal Store-compatible interface used by this module.
+interface TokenStore {
+  get<T>(key: string): Promise<T | undefined | null>
+  set(key: string, value: unknown): Promise<void>
+  delete(key: string): Promise<boolean | void>
+  save(): Promise<void>
+}
+
+// Browser fallback backed by localStorage for the web preview, where the
+// Tauri store plugin (which relies on `invoke`) is unavailable.
+class WebStore implements TokenStore {
+  constructor(private readonly key = "flowspace-tokens") {}
+
+  private read(): Record<string, unknown> {
+    try {
+      return JSON.parse(localStorage.getItem(this.key) ?? "{}")
+    } catch {
+      return {}
+    }
+  }
+
+  private write(data: Record<string, unknown>) {
+    localStorage.setItem(this.key, JSON.stringify(data))
+  }
+
+  async get<T>(key: string): Promise<T | undefined | null> {
+    return (this.read()[key] as T) ?? null
+  }
+
+  async set(key: string, value: unknown): Promise<void> {
+    const data = this.read()
+    data[key] = value
+    this.write(data)
+  }
+
+  async delete(key: string): Promise<boolean> {
+    const data = this.read()
+    const existed = key in data
+    delete data[key]
+    this.write(data)
+    return existed
+  }
+
+  async save(): Promise<void> {
+    // localStorage writes are synchronous; nothing to flush.
+  }
+}
+
+let _store: TokenStore | null = null
+async function getStore(): Promise<TokenStore> {
+  if (!_store) {
+    _store = isTauri() ? await Store.load("flowspace-tokens.dat") : new WebStore()
+  }
   return _store
 }
 
@@ -109,6 +160,12 @@ export async function isConnected(): Promise<boolean> {
 // ─── OAuth PKCE Flow ──────────────────────────────────────────────────────────
 
 export async function startOAuth(clientId: string): Promise<string> {
+  if (!isTauri()) {
+    throw new Error(
+      "O login do Spotify só está disponível no app desktop (Tauri). Abra o FlowSpace como aplicativo para conectar."
+    )
+  }
+
   const verifier = generateVerifier()
   const challenge = await generateChallenge(verifier)
 
