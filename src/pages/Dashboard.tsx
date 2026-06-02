@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { LayoutDashboard, FileText, Plus, Music2, ChevronRight, FolderOpen } from "lucide-react"
+import { LayoutDashboard, FileText, Plus, Music2, ChevronRight, Play } from "lucide-react"
 import { boardsDb, notesDb, type Board, type Note } from "@/lib/db"
 import { useSpotifyStore } from "@/store"
 import { useLocalPlayerStore } from "@/store/localPlayer"
@@ -40,14 +40,32 @@ export function DashboardPage() {
 
   return (
     <div className="h-full overflow-y-auto">
-      <div className="max-w-4xl mx-auto px-8 py-8">
+      <div className="max-w-4xl mx-auto px-8 py-10">
 
         {/* Header */}
-        <div className="mb-9">
-          <h1 className="text-[24px] font-bold mb-1 tracking-tight" style={{ color: "var(--text-primary)" }}>
-            {greeting()} 👋
-          </h1>
-          <p className="text-[13px] capitalize" style={{ color: "var(--text-muted)" }}>{todayStr()}</p>
+        <div className="mb-10 flex items-end justify-between gap-4">
+          <div>
+            <p
+              className="text-[11px] font-semibold uppercase tracking-[0.18em] mb-2 capitalize"
+              style={{ color: "var(--accent)" }}
+            >
+              {todayStr()}
+            </p>
+            <h1
+              className="text-[28px] font-bold tracking-tight leading-none text-balance"
+              style={{ color: "var(--text-primary)" }}
+            >
+              {greeting()}
+            </h1>
+          </div>
+          <button
+            onClick={() => navigate("/boards")}
+            className="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-lg text-[13px] font-medium shrink-0 transition-all hover:opacity-90"
+            style={{ background: "var(--accent)", color: "#fff" }}
+          >
+            <Plus className="w-4 h-4" />
+            Novo board
+          </button>
         </div>
 
         {/* Stats */}
@@ -70,64 +88,65 @@ export function DashboardPage() {
           {/* Music card */}
           {spotifyConnected && nowPlaying ? (
             <div
-              className="rounded-xl p-4"
+              className="rounded-xl p-5 flex flex-col"
               style={{ background: "var(--card-bg)", border: "1px solid var(--border-subtle)" }}
             >
               <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center mb-3"
-                style={{ background: "rgba(29,185,84,0.1)" }}
+                className="w-9 h-9 rounded-lg flex items-center justify-center mb-4"
+                style={{ background: "rgba(29,185,84,0.12)" }}
               >
                 <Music2 className="w-4 h-4" style={{ color: "#1DB954" }} />
               </div>
-              <p className="text-[11px] mb-1 uppercase tracking-wide font-medium" style={{ color: "var(--text-muted)" }}>
-                Spotify
-              </p>
-              <p className="text-sm font-bold truncate leading-tight" style={{ color: "var(--text-primary)" }}>
+              <p className="text-[15px] font-semibold truncate leading-tight mb-1" style={{ color: "var(--text-primary)" }}>
                 {nowPlaying.name}
               </p>
-              {nowPlaying.artist && (
-                <p className="text-[11px] truncate mt-0.5" style={{ color: "var(--text-muted)" }}>
-                  {nowPlaying.artist}
-                </p>
-              )}
+              <p className="text-[11px] uppercase tracking-[0.1em] font-medium truncate" style={{ color: "var(--text-muted)" }}>
+                {nowPlaying.artist || "Spotify"}
+              </p>
             </div>
           ) : localTracks.length > 0 ? (
             <div
-              className="rounded-xl p-4"
+              className="rounded-xl p-5 flex flex-col"
               style={{ background: "var(--card-bg)", border: "1px solid var(--border-subtle)" }}
             >
               <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center mb-3"
-                style={{ background: "rgba(139,92,246,0.1)" }}
+                className="w-9 h-9 rounded-lg flex items-center justify-center mb-4"
+                style={{ background: "rgba(139,92,246,0.12)" }}
               >
                 <Music2 className="w-4 h-4" style={{ color: "#a78bfa" }} />
               </div>
-              <p className="text-[11px] mb-1 uppercase tracking-wide font-medium" style={{ color: "var(--text-muted)" }}>
-                Música local
+              <p className="text-[15px] font-semibold truncate leading-tight mb-1 flex items-center gap-1.5" style={{ color: "var(--text-primary)" }}>
+                {localIsPlaying && <Play className="w-3 h-3 fill-current shrink-0" style={{ color: "#a78bfa" }} />}
+                <span className="truncate">{localCurrent?.name ?? "—"}</span>
               </p>
-              <p className="text-sm font-bold truncate leading-tight" style={{ color: "var(--text-primary)" }}>
-                {localIsPlaying ? "▶ " : ""}{localCurrent?.name ?? "—"}
-              </p>
-              <p className="text-[11px] mt-0.5" style={{ color: "var(--text-muted)" }}>
+              <p className="text-[11px] uppercase tracking-[0.1em] font-medium" style={{ color: "var(--text-muted)" }}>
                 {localTracks.length} faixa{localTracks.length !== 1 ? "s" : ""}
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-2">
-              <button
-                onClick={() => navigate("/settings?tab=spotify")}
-                className="rounded-xl p-3 transition-all text-left border-dashed flex items-center gap-2.5"
-                style={{ background: "var(--card-bg)", border: "1px dashed var(--border)" }}
-              >
-                <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ background: "var(--bg-surface-1)" }}>
-                  <Music2 className="w-3.5 h-3.5" style={{ color: "var(--text-faint)" }} />
+            <button
+              onClick={() => navigate("/settings?tab=spotify")}
+              className="group rounded-xl p-5 transition-all text-left flex flex-col"
+              style={{ background: "var(--card-bg)", border: "1px dashed var(--border)" }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--accent)" }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border)" }}
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: "var(--bg-surface-1)" }}>
+                  <Music2 className="w-4 h-4" style={{ color: "var(--text-muted)" }} />
                 </div>
-                <div>
-                  <p className="text-[11px] font-medium" style={{ color: "var(--text-faint)" }}>Spotify</p>
-                  <p className="text-[10px]" style={{ color: "var(--text-faint)" }}>Conectar →</p>
-                </div>
-              </button>
-            </div>
+                <ChevronRight
+                  className="w-4 h-4 opacity-0 -translate-x-1 transition-all group-hover:opacity-100 group-hover:translate-x-0"
+                  style={{ color: "var(--accent)" }}
+                />
+              </div>
+              <p className="text-[15px] font-semibold leading-none mb-1.5" style={{ color: "var(--text-secondary)" }}>
+                Conectar Spotify
+              </p>
+              <p className="text-[11px] uppercase tracking-[0.1em] font-medium" style={{ color: "var(--text-muted)" }}>
+                Música
+              </p>
+            </button>
           )}
         </div>
 
@@ -226,24 +245,38 @@ function StatCard({
   return (
     <Link
       to={to}
-      className="rounded-xl p-4 transition-all hover:-translate-y-0.5 hover:shadow-lg group"
+      className="group relative rounded-xl p-5 transition-all hover:-translate-y-0.5"
       style={{
         background: "var(--card-bg)",
         border: "1px solid var(--border-subtle)",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+        boxShadow: "0 1px 2px rgba(0,0,0,0.18)",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = "var(--border)"
+        e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.28)"
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = "var(--border-subtle)"
+        e.currentTarget.style.boxShadow = "0 1px 2px rgba(0,0,0,0.18)"
       }}
     >
-      <div
-        className="w-8 h-8 rounded-lg flex items-center justify-center mb-3"
-        style={{ background: iconBg }}
-      >
-        {icon}
+      <div className="flex items-start justify-between mb-4">
+        <div
+          className="w-9 h-9 rounded-lg flex items-center justify-center"
+          style={{ background: iconBg }}
+        >
+          {icon}
+        </div>
+        <ChevronRight
+          className="w-4 h-4 opacity-0 -translate-x-1 transition-all group-hover:opacity-100 group-hover:translate-x-0"
+          style={{ color: "var(--text-muted)" }}
+        />
       </div>
-      <p className="text-[11px] mb-1.5 uppercase tracking-wide font-medium" style={{ color: "var(--text-muted)" }}>
-        {label}
-      </p>
-      <p className="text-[28px] font-bold leading-none" style={{ color: "var(--text-primary)" }}>
+      <p className="text-[28px] font-bold leading-none mb-1.5 tracking-tight" style={{ color: "var(--text-primary)" }}>
         {value}
+      </p>
+      <p className="text-[11px] uppercase tracking-[0.1em] font-medium" style={{ color: "var(--text-muted)" }}>
+        {label}
       </p>
     </Link>
   )

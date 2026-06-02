@@ -1,6 +1,6 @@
 import { useRef, useState } from "react"
 import { NavLink, useNavigate } from "react-router-dom"
-import { Home, LayoutDashboard, FileText, Settings, Music2, LogOut, BookOpen, FolderOpen, Youtube, Info } from "lucide-react"
+import { Home, LayoutDashboard, FileText, Settings, Music2, LogOut, BookOpen, FolderOpen, Youtube, Info, Play } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { clearTokens } from "@/lib/spotify"
 import { useSpotifyStore } from "@/store"
@@ -60,7 +60,13 @@ export function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-2 pt-3 space-y-0.5" role="menubar">
+      <nav className="flex-1 p-2 pt-4 space-y-0.5" role="menubar">
+        <p
+          className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.14em]"
+          style={{ color: "var(--text-faint)" }}
+        >
+          Navegação
+        </p>
         {NAV.map(({ to, label, Icon, exact }) => (
           <NavLink
             key={to}
@@ -117,7 +123,13 @@ export function Sidebar() {
       <div style={{ height: 1, background: "var(--border-subtle)", margin: "0 12px" }} />
 
       {/* Bottom section */}
-      <div className="p-2.5 pt-2 space-y-0.5">
+      <div className="p-2.5 pt-2.5 space-y-0.5">
+        <p
+          className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.14em]"
+          style={{ color: "var(--text-faint)" }}
+        >
+          Música
+        </p>
         {/* Spotify */}
         {spotifyConnected ? (
           <>
@@ -180,10 +192,11 @@ export function Sidebar() {
                   const id = extractVideoId(ytInput)
                   if (id) { setVideo(id); setYtInput(""); setYtOpen(false) }
                 }}
-                className="px-2 rounded-lg text-[11px]"
+                aria-label="Reproduzir vídeo"
+                className="px-2.5 rounded-lg flex items-center justify-center transition-opacity hover:opacity-80"
                 style={{ background: "rgba(255,0,0,0.15)", color: "#ff6666" }}
               >
-                ▶
+                <Play className="w-3 h-3 fill-current" />
               </button>
             </div>
           </div>
