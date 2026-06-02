@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react"
-import { HashRouter, Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom"
+import { MemoryRouter, Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom"
 import { initDb } from "@/lib/db"
 import { useSpotifyStore } from "@/store"
 import { isConnected } from "@/lib/spotify"
@@ -58,7 +58,7 @@ export default function App() {
     <ThemeProvider>
       {(!splashDone || !dbReady) && <SplashScreen onDone={handleSplashDone} />}
       {ready && (
-        <HashRouter>
+        <MemoryRouter initialEntries={["/dashboard"]}>
           <KeyboardShortcuts />
           <div className="flex flex-col h-full" style={{ background: "var(--bg-base)" }}>
             <TitleBar />
@@ -83,7 +83,7 @@ export default function App() {
             <LocalPlayer />
             <YouTubePlayer />
           </div>
-        </HashRouter>
+        </MemoryRouter>
       )}
     </ThemeProvider>
   )
